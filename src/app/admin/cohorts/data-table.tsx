@@ -37,41 +37,6 @@ import {
 } from "@/components/ui/table"
 import Link from "next/link"
 
-const data: Cohort[] = [
-    {
-        id: "1",
-        status: "completed",
-        name: "2020-2021",
-    },
-    {
-        id: "2",
-        status: "completed",
-        name: "2022-2023",
-    },
-    {
-        id: "3",
-        status: "active",
-        name: "2024-2025",
-    },
-    {
-        id: "4",
-        status: "pending",
-        name: "2025-2026",
-    },
-    {
-        id: "5",
-        status: "canceled",
-        name: "2025-2026",
-    },
-
-]
-
-export type Cohort = {
-    id: string
-    status: "active" | "completed" | "canceled" | "pending"
-    name: string
-}
-
 export const columns: ColumnDef<Cohort>[] = [
     {
         id: "select",
@@ -125,10 +90,10 @@ export const columns: ColumnDef<Cohort>[] = [
         },
         cell: ({ row }) => (
             <div className="lowercase flex items-center gap-1">
-                {row.getValue("status") === "active" && <CirclePlay className="size-4 text-emerald-400" />}
-                {row.getValue("status") === "completed" && <CheckCircle2 className="size-4 text-blue-400" />}
-                {row.getValue("status") === "pending" && <CirclePause className="size-4 text-amber-400" />}
-                {row.getValue("status") === "canceled" && <CircleX className="size-4 text-red-400" />}
+                {row.getValue("status") === "ACTIVE" && <CirclePlay className="size-4 text-emerald-400" />}
+                {row.getValue("status") === "COMPLETED" && <CheckCircle2 className="size-4 text-blue-400" />}
+                {row.getValue("status") === "PENDING" && <CirclePause className="size-4 text-amber-400" />}
+                {row.getValue("status") === "CANCELED" && <CircleX className="size-4 text-red-400" />}
                 {row.getValue("status")}
             </div>
         ),
@@ -164,7 +129,11 @@ export const columns: ColumnDef<Cohort>[] = [
     },
 ]
 
-export function DataTableCohorts() {
+interface DataTableCohortsProps {
+    data: Cohort[]
+}
+
+export function DataTableCohorts({data}: DataTableCohortsProps) {
     const [sorting, setSorting] = React.useState<SortingState>([])
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
         []
