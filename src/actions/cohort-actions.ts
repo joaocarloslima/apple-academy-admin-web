@@ -9,7 +9,7 @@ const cohortApi = api.extend((options) => ({prefixUrl: `${options.prefixUrl}/coh
 
 
 export async function getCohorts() {
-    const json = await cohortApi.get("").json<Cohort>()
+    const json = await cohortApi.get("").json<Cohort[]>()
     console.log(json)
     return json
 }
