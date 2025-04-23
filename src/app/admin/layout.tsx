@@ -5,7 +5,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <SidebarProvider>
       <AppSidebar />
-      <main>
+      <main className="flex flex-col gap-4 p-6 w-full ">
         <SidebarTrigger />
         {children}
       </main>
