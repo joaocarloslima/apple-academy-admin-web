@@ -36,6 +36,7 @@ import {
     TableRow,
 } from "@/components/ui/table"
 import Link from "next/link"
+import { CohortFormCreate } from "./form-create"
 
 export const columns: ColumnDef<Cohort>[] = [
     {
@@ -163,7 +164,7 @@ export function DataTableCohorts({data}: DataTableCohortsProps) {
 
     return (
         <div className="w-full">
-            <div className="flex items-center py-4">
+            <div className="flex items-center py-4 space-x-2">
                 <Input
                     placeholder="Filter name..."
                     value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
@@ -199,10 +200,7 @@ export function DataTableCohorts({data}: DataTableCohortsProps) {
                     </DropdownMenuContent>
                 </DropdownMenu>
                 <Button asChild>
-                    <Link href={"/admin/cohorts/create"} className="ml-2">
-                        <Plus className="size-4" />
-                        Create Cohort
-                    </Link>
+                    <CohortFormCreate />
                 </Button>
             </div>
             <div className="rounded-md border">

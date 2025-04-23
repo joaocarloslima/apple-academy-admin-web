@@ -1,4 +1,6 @@
-import { Calendar, ChevronDown, Home, Inbox, Layers, Moon, Search, Settings, Sun, User, UserCheck } from "lucide-react"
+"use client"
+
+import { ChevronDown, Layers, Moon, Sun, User, UserCheck } from "lucide-react"
 
 import {
     Sidebar,
@@ -8,12 +10,12 @@ import {
     SidebarGroupLabel,
     SidebarHeader,
     SidebarMenu,
-    SidebarMenuAction,
     SidebarMenuButton,
-    SidebarMenuItem,
+    SidebarMenuItem
 } from "@/components/ui/sidebar"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu"
+import { usePathname } from "next/navigation"
 import { ModeToggle } from "./mode-toggle"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu"
 
 // Menu items.
 const items = [
@@ -24,7 +26,7 @@ const items = [
     },
     {
         title: "Mentors",
-        url: "#",
+        url: "/admin/mentors",
         icon: UserCheck,
     },
     {
@@ -32,10 +34,12 @@ const items = [
         url: "#",
         icon: User,
     },
-    
+
 ]
 
 export function AppSidebar() {
+    const pathname = usePathname()
+
     return (
         <Sidebar collapsible="icon">
             <SidebarHeader>
@@ -65,16 +69,20 @@ export function AppSidebar() {
                     <SidebarGroupLabel>Application</SidebarGroupLabel>
                     <SidebarGroupContent>
                         <SidebarMenu>
-                            {items.map((item) => (
-                                <SidebarMenuItem key={item.title}>
-                                    <SidebarMenuButton asChild>
-                                        <a href={item.url}>
-                                            <item.icon />
-                                            <span>{item.title}</span>
-                                        </a>
-                                    </SidebarMenuButton>
-                                </SidebarMenuItem>
-                            ))}
+                            {items.map((item) => {
+                                const isActive = pathname === item.url
+                                return (
+                                    <SidebarMenuItem key={item.title}>
+                                        <SidebarMenuButton asChild isActive={isActive}>
+                                            <a href={item.url}>
+                                                <item.icon />
+                                                <span>{item.title}</span>
+                                            </a>
+                                        </SidebarMenuButton>
+                                    </SidebarMenuItem>
+                                )
+                            }
+                            )}
                         </SidebarMenu>
                     </SidebarGroupContent>
                 </SidebarGroup>
