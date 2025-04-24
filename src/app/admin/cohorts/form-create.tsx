@@ -43,9 +43,12 @@ export function CohortFormCreate() {
                     return "Cohort created successfully";
                 },
                 error: (error) => {
-                    //setOpen(false);
+                
                     return "Error creating cohort. " + error.message;
                 },
+                finally: () => {
+                    setPending(false);
+                }
             }
         );
 
