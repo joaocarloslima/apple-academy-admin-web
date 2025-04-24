@@ -1,6 +1,6 @@
 interface Cohort {
     id: string;
-    status: "active" | "completed" | "canceled" | "pending";
+    status: "ACTIVE" | "COMPLETED" | "CANCELED" | "PENDING";
     startDate: string;
     endDate: string;
     name: string;
