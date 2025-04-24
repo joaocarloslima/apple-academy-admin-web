@@ -1,6 +1,5 @@
 "use client"
 
-import * as React from "react"
 import {
     ColumnDef,
     ColumnFiltersState,
@@ -13,7 +12,8 @@ import {
     getSortedRowModel,
     useReactTable,
 } from "@tanstack/react-table"
-import { ArrowUpDown, CheckCircle2, ChevronDown, CircleDot, CirclePause, CirclePlay, CirclePlus, CircleX, MoreHorizontal, Plus } from "lucide-react"
+import { ArrowUpDown, CheckCircle2, ChevronDown, CirclePause, CirclePlay, CircleX, MoreHorizontal } from "lucide-react"
+import * as React from "react"
 
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -35,8 +35,8 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
-import Link from "next/link"
 import { CohortFormCreate } from "./form-create"
+import { set } from "date-fns"
 
 export const columns: ColumnDef<Cohort>[] = [
     {
@@ -131,10 +131,11 @@ export const columns: ColumnDef<Cohort>[] = [
 ]
 
 interface DataTableCohortsProps {
-    data: Cohort[]
+    cohorts: Cohort[]
 }
 
-export function DataTableCohorts({data}: DataTableCohortsProps) {
+export function DataTableCohorts({ cohorts }: DataTableCohortsProps) {
+    const [data, setData] = React.useState<Cohort[]>(cohorts)
     const [sorting, setSorting] = React.useState<SortingState>([])
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
         []
@@ -161,6 +162,10 @@ export function DataTableCohorts({data}: DataTableCohortsProps) {
             rowSelection,
         },
     })
+
+    function add(newCohort: Cohort) {
+        setData((prev) => [...prev, newCohort])
+    }
 
     return (
         <div className="w-full">
@@ -200,7 +205,7 @@ export function DataTableCohorts({data}: DataTableCohortsProps) {
                     </DropdownMenuContent>
                 </DropdownMenu>
                 <Button asChild>
-                    <CohortFormCreate />
+                    <CohortFormCreate onAdd={add} />
                 </Button>
             </div>
             <div className="rounded-md border">

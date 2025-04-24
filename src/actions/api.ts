@@ -1,3 +1,5 @@
+import { get } from "http"
+
 const API_URL = process.env.API_BASE_URL || 'http://localhost:8080'
 
 export const api = {
@@ -26,10 +28,19 @@ export const api = {
             body: JSON.stringify(data),
         })
         if (!response.ok) {
+            if (response.status === 400){
+                const errorData = await response.json()
+                return Promise.reject(mapApiErrors(errorData))
+            }
             throw new Error(`Error posting data: ${response.statusText}`)
         }
         return response.json()
     }
-        
-    
 }
+
+function mapApiErrors(errorsArray: any[]) {
+    return errorsArray.reduce((accumulator, currentError) => {
+      accumulator[currentError.field] = currentError.message;
+      return accumulator;
+    }, {});
+  }

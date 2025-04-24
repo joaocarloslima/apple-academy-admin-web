@@ -18,10 +18,19 @@ const initialState = {
     status: "ACTIVE",
 };
 
-export function CohortFormCreate() {
+const initialErrors = {
+    name: "",
+};
+
+interface CohortFormCreateProps {
+    onAdd: (cohort: Cohort) => void;
+}
+
+export function CohortFormCreate({onAdd}: CohortFormCreateProps) {
     const [open, setOpen] = useState(false);
     const [pending, setPending] = useState(false);
     const [cohort, setCohort] = useState(initialState);
+    const [errors, setErrors] = useState(initialErrors);
 
     function handleChange(event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) {
         const { name, value } = event.target;
@@ -39,12 +48,13 @@ export function CohortFormCreate() {
             {
                 loading: "Creating cohort...",
                 success: (response) => {
+                    onAdd(response);
                     setOpen(false);
                     return "Cohort created successfully";
                 },
-                error: (error) => {
-                
-                    return "Error creating cohort. " + error.message;
+                error: (errors) => {
+                    setErrors(errors);
+                    return "Error creating cohort. "
                 },
                 finally: () => {
                     setPending(false);
@@ -52,8 +62,8 @@ export function CohortFormCreate() {
             }
         );
 
-       
-    } 
+
+    }
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
@@ -72,24 +82,28 @@ export function CohortFormCreate() {
                         </DialogDescription>
                     </DialogHeader>
                     <div className="grid gap-4 py">
-
-                        <div className="grid grid-cols-4 items-center gap-4">
-                            <Label htmlFor="name" className="text-right">Name</Label>
-                            <Input 
-                                placeholder="e.g., 2024-2025" 
-                                id="name" 
-                                name="name" 
-                                className="col-span-3" 
-                                defaultValue={cohort.name} 
-                                onBlur={handleChange} 
-                            />
+                        <div>
+                            <div className="grid grid-cols-4 items-center gap-4">
+                                <Label htmlFor="name" className="text-right">Name</Label>
+                                <Input
+                                    placeholder="e.g., 2024-2025"
+                                    id="name"
+                                    name="name"
+                                    className="col-span-3"
+                                    defaultValue={cohort.name}
+                                    onBlur={handleChange}
+                                    aria-invalid={!!errors.name}
+                                />
+                            </div>
+                            <span className="text-sm text-destructive text-right block">{errors.name}</span>
                         </div>
+
 
                         <div className="grid grid-cols-4 items-center gap-4">
                             <Label htmlFor="startDate" className="text-right">Start Date</Label>
-                            <DatePicker 
-                                name="startDate" 
-                                defaltValue={cohort.startDate}
+                            <DatePicker
+                                name="startDate"
+                                defaultValue={cohort.startDate}
                                 onChange={handleChange}
                                 className="col-span-3"
                             />
@@ -97,8 +111,8 @@ export function CohortFormCreate() {
 
                         <div className="grid grid-cols-4 items-center gap-4">
                             <Label htmlFor="endDate" className="text-right">End Date</Label>
-                            <DatePicker 
-                                name="endDate" 
+                            <DatePicker
+                                name="endDate"
                                 className="col-span-3"
                                 defaultValue={cohort.endDate}
                                 onChange={handleChange}
@@ -111,8 +125,8 @@ export function CohortFormCreate() {
 
                             <Select
                                 name="status"
-                                className="col-span-3"
                                 defaultValue="ACTIVE"
+                                className="col-span-3"
                                 onValueChange={value => setCohort({ ...cohort, status: value })}
                             >
                                 <SelectTrigger>
