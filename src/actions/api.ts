@@ -35,6 +35,17 @@ export const api = {
             throw new Error(`Error posting data: ${response.statusText}`)
         }
         return response.json()
+    },
+    delete: async (id: string) => {
+        const response = await fetch(`${API_URL}${api.path}/${id}`, {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        })
+        if (!response.ok) {
+            throw new Error(`Error deleting data: ${response.statusText}`)
+        }
     }
 }
 
