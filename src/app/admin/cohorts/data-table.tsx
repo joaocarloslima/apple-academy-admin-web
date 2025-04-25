@@ -12,7 +12,7 @@ import {
     getSortedRowModel,
     useReactTable,
 } from "@tanstack/react-table"
-import { ArrowUpDown, CheckCircle2, ChevronDown, CirclePause, CirclePlay, CircleX, Copy, MoreHorizontal, Pencil, Trash2 } from "lucide-react"
+import { ArrowUpDown, CheckCircle2, ChevronDown, CirclePause, CirclePlay, CircleX, Copy, MoreHorizontal, Pencil, Plus, Trash2 } from "lucide-react"
 import * as React from "react"
 
 import { Button } from "@/components/ui/button"
@@ -50,6 +50,8 @@ interface DataTableCohortsProps {
 export function DataTableCohorts({ cohorts }: DataTableCohortsProps) {
     const [data, setData] = React.useState<Cohort[]>(cohorts)
     const [sorting, setSorting] = React.useState<SortingState>([])
+    const [editingCohort, setEditingCohort] = React.useState<Cohort | null>(null)
+    const [dialogOpen, setDialogOpen] = React.useState(false)
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
         []
     )
@@ -123,7 +125,7 @@ export function DataTableCohorts({ cohorts }: DataTableCohortsProps) {
             enableHiding: false,
             cell: ({ row }) => {
                 const cohort = row.original
-    
+
                 return (
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
@@ -137,16 +139,16 @@ export function DataTableCohorts({ cohorts }: DataTableCohortsProps) {
                             <DropdownMenuItem
                                 onClick={() => navigator.clipboard.writeText(cohort.id)}
                             >
-                                <Copy className="size-4"/>
+                                <Copy className="size-4" />
                                 Copy ID
                             </DropdownMenuItem>
                             <DropdownMenuSeparator />
                             <DropdownMenuItem onClick={() => handleDelete(cohort.id)}>
-                                <Trash2 className="size-4"/>
+                                <Trash2 className="size-4" />
                                 Delete
                             </DropdownMenuItem>
-                            <DropdownMenuItem>
-                                <Pencil className="size-4"/>
+                            <DropdownMenuItem onClick={() => handleEdit(cohort)}>
+                                <Pencil className="size-4" />
                                 Edit
                             </DropdownMenuItem>
                         </DropdownMenuContent>
@@ -193,6 +195,16 @@ export function DataTableCohorts({ cohorts }: DataTableCohortsProps) {
         );
     }
 
+    function handleEdit(cohort: Cohort) {
+        setEditingCohort(cohort);
+        setDialogOpen(true);
+    }
+
+    function handleAdd() {
+        setEditingCohort(null);
+        setDialogOpen(true);
+    }
+
     return (
         <div className="w-full">
             <div className="flex items-center py-4 space-x-2">
@@ -230,8 +242,9 @@ export function DataTableCohorts({ cohorts }: DataTableCohortsProps) {
                             })}
                     </DropdownMenuContent>
                 </DropdownMenu>
-                <Button asChild>
-                    <CohortFormCreate onAdd={add} />
+                <Button onClick={handleAdd}>
+                    <Plus className="size-4" />
+                    Add Cohort
                 </Button>
             </div>
             <div className="rounded-md border">
@@ -308,6 +321,21 @@ export function DataTableCohorts({ cohorts }: DataTableCohortsProps) {
                     </Button>
                 </div>
             </div>
+            <CohortFormCreate
+                open={dialogOpen}
+                onOpenChange={setDialogOpen}
+                cohort={editingCohort}
+                onSuccess={(saved) => {
+                    setDialogOpen(false);
+
+                    if (editingCohort) {
+                        setData((prev) => prev.map((c) => (c.id === saved.id ? saved : c)));
+                    } else {
+                        setData((prev) => [...prev, saved]);
+                    }
+                    setEditingCohort(null);
+                }}
+            />
         </div>
     )
 }

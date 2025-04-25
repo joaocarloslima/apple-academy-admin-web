@@ -46,7 +46,24 @@ export const api = {
         if (!response.ok) {
             throw new Error(`Error deleting data: ${response.statusText}`)
         }
-    }
+    },
+    put: async (path: string, data: any) => {
+        const response = await fetch(`${API_URL}${api.path}${path}`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data),
+        })
+        if (!response.ok) {
+            if (response.status === 400){
+                const errorData = await response.json()
+                return Promise.reject(mapApiErrors(errorData))
+            }
+            throw new Error(`Error putting data: ${response.statusText}`)
+        }
+        return response.json()
+    },
 }
 
 function mapApiErrors(errorsArray: any[]) {

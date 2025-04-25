@@ -1,4 +1,3 @@
-// components/date-picker.tsx
 "use client";
 
 import * as React from "react";
@@ -16,55 +15,62 @@ import {
 } from "@/components/ui/popover";
 
 interface DatePickerProps {
-    defaultValue?: string;
-    onChange?: (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
-    name?: string;
-    className?: string;
+    defaultValue?: string
+    value?: string
+    onChange?: (value: string) => void
+    name?: string
+    className?: string
+}
+
+function safeFormat(date: Date | undefined, formatStr: string) {
+    return date && isValid(date) ? format(date, formatStr) : "";
 }
 
 export function DatePicker({ defaultValue, onChange, name, className }: DatePickerProps) {
-    const [date, setDate] = React.useState<Date | undefined>(
-        defaultValue ? new Date(defaultValue) : undefined
-    );
-    const [inputValue, setInputValue] = React.useState(
-        defaultValue ? format(new Date(defaultValue), "MM/dd/yyyy") : ""
-    );
     const [isOpen, setIsOpen] = React.useState(false);
 
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const val = e.target.value;
-        setInputValue(val);
+    const initialDate = defaultValue ? parse(defaultValue, "yyyy-MM-dd", new Date()) : undefined;
 
-        const parsedDate = parse(val, "MM/dd/yyyy", new Date());
-        if (isValid(parsedDate)) {
-            setDate(parsedDate);
-            onChange?.(e);
+    const [date, setDate] = React.useState<Date | undefined>(
+        isValid(initialDate) ? initialDate : undefined
+    );
+
+    const [inputValue, setInputValue] = React.useState(
+        safeFormat(initialDate, "yyyy-MM-dd")
+    );
+
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+
+        const val = e.target.value;
+        const parsed = parse(val, "yyyy-MM-dd", new Date());
+        setInputValue(val);
+        if (isValid(parsed) && val.length === 10) {
+            const iso = parsed.toISOString().slice(0, 10);
+            setDate(parsed);
+            onChange?.(iso);
         }
     };
 
-    const handleDateSelect = (selectedDate: Date | undefined) => {
-        if (selectedDate) {
-            setDate(selectedDate);
-            const formatted = format(selectedDate, "MM/dd/yyyy");
-            setInputValue(formatted);
-            onChange?.({
-                target: {
-                    name,
-                    value: formatted,
-                },
-            } as React.ChangeEvent<HTMLInputElement>);
-            setIsOpen(false);
-        }
+    const handleDateSelect = (selected: Date | undefined) => {
+        if (!selected) return;
+
+        const safeDate = new Date(Date.UTC(selected.getFullYear(), selected.getMonth(), selected.getDate()));
+        const iso = selected.toISOString().slice(0, 10);
+
+        setDate(safeDate);
+        setInputValue(iso);
+        onChange?.(iso)
+        setIsOpen(false);
     };
 
     return (
         <div className={cn("flex items-center space-x-2", className)}>
             <Input
                 type="text"
-                placeholder="MM/DD/YYYY"
+                placeholder="yyyy-MM-dd"
                 value={inputValue}
                 onChange={handleInputChange}
-                className="w-[200px]"
+                className="w-[160px]"
             />
             <Popover modal={true} open={isOpen} onOpenChange={setIsOpen}>
                 <PopoverTrigger asChild>
@@ -78,12 +84,12 @@ export function DatePicker({ defaultValue, onChange, name, className }: DatePick
                         selected={date}
                         onSelect={handleDateSelect}
                         initialFocus
-                        month={date}
+                        defaultMonth={date ?? new Date()}
                         className="pointer-events-auto"
                     />
                 </PopoverContent>
             </Popover>
-            {name && <input type="hidden" name={name} value={defaultValue} />}
+            {name && <input type="hidden" name={name} value={inputValue} />}
         </div>
     );
 }

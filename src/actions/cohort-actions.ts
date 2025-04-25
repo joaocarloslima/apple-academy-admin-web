@@ -8,12 +8,13 @@ export async function getCohorts() {
 }
 
 export async function createCohort(data: Cohort) {
-    data.startDate = format(new Date(data.startDate), "yyyy-MM-dd");
-    data.endDate = format(new Date(data.endDate), "yyyy-MM-dd");   
-    
     await new Promise((resolve) => setTimeout(resolve, 3000));
-
     return await api.post("", data)
+}
+
+export async function updateCohort(data: Cohort) {
+    await new Promise((resolve) => setTimeout(resolve, 3000));
+    return await api.put(`/${data.id}`, data)
 }
     
     
