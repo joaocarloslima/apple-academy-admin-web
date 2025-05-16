@@ -5,3 +5,12 @@ interface Cohort {
     endDate: string;
     name: string;
 }
+
+interface Mentor {
+    id: string;
+    name: string;
+    expertise: string;
+    avatarPath  : string;
+    email: string;
+    password: string;
+}

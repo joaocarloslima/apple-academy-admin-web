@@ -8,12 +8,12 @@ export async function getCohorts() {
 }
 
 export async function createCohort(data: Cohort) {
-    await new Promise((resolve) => setTimeout(resolve, 3000));
+    //await new Promise((resolve) => setTimeout(resolve, 3000));
     return await api.post("", data)
 }
 
 export async function updateCohort(data: Cohort) {
-    await new Promise((resolve) => setTimeout(resolve, 3000));
+    //await new Promise((resolve) => setTimeout(resolve, 3000));
     return await api.put(`/${data.id}`, data)
 }
     

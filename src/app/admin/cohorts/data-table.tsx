@@ -35,7 +35,7 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
-import { CohortFormCreate } from "./form-create"
+import { CohortFormCreate } from "./cohort-form"
 import { api } from "@/actions/api"
 import { toast } from "sonner"
 
