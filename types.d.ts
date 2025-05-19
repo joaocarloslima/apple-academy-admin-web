@@ -13,4 +13,5 @@ interface Mentor {
     avatarPath  : string;
     email: string;
     password: string;
+    active: boolean;
 }

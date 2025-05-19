@@ -13,3 +13,7 @@ export async function createMentor(mentor: Mentor) {
 export async function updateMentor(mentor: Mentor) {
     return await api.put(`/${mentor.id}`, mentor);
 }
+
+export async function toggleActiveMentor(mentor: Mentor) {
+    return await api.patch(`/${mentor.id}/toggle-active`);
+}

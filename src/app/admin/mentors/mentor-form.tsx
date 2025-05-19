@@ -1,8 +1,6 @@
 "use client";
 
-import { createCohort, updateCohort } from "@/actions/cohort-actions";
-import { createMentor, updateMentor } from "@/actions/mentor-actions";
-import { DatePicker } from "@/components/date-picker";
+import { createMentor, toggleActiveMentor, updateMentor } from "@/actions/mentor-actions";
 import { Button } from "@/components/ui/button";
 import {
     Dialog,
@@ -21,13 +19,10 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
 import {
     Briefcase,
     Check,
-    CheckCircle2,
-    CirclePause,
-    CirclePlay,
-    CircleX,
     Code,
     Loader2,
     Palette
@@ -41,6 +36,7 @@ const initialState = {
     expertise: "",
     password: "",
     avatarPath: "",
+    active: true,
 };
 
 const initialErrors = {
@@ -72,6 +68,7 @@ export function MentorForm({ onSuccess, mentor, open, onOpenChange }: MentorForm
                 expertise: mentor.expertise,
                 password: mentor.password,
                 avatarPath: mentor.avatarPath,
+                active: mentor.active,
             });
         } else {
             setForm(initialState);
@@ -81,6 +78,17 @@ export function MentorForm({ onSuccess, mentor, open, onOpenChange }: MentorForm
     function handleChange(event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) {
         const { name, value } = event.target;
         setForm((prev) => ({ ...prev, [name]: value }));
+    }
+
+    function handleToggleActive() {
+        setForm((prev) => ({ ...prev, active: !prev.active }));
+        toggleActiveMentor(mentor as Mentor).then(() => {
+            toast.success("Mentor status updated successfully");
+        }
+        ).catch((error) => {
+            toast.error("Error updating mentor status");
+        }
+        );
     }
 
     function handleSubmit() {
@@ -192,10 +200,15 @@ export function MentorForm({ onSuccess, mentor, open, onOpenChange }: MentorForm
                         <span className="text-sm text-destructive text-right block">{errors.avatarPath}</span>
                     </div>
 
-                    
+                    <div className="grid grid-cols-4 items-center gap-4">
+                        <Label htmlFor="active">Active User</Label>
+                        <Switch id="active" defaultChecked={!form.active} onCheckedChange={handleToggleActive} />
+                    </div>
+
                 </div>
 
                 <DialogFooter>
+    
                     <Button onClick={handleSubmit} disabled={pending}>
                         {pending ? (
                             <>

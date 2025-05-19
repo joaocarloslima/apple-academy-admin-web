@@ -64,6 +64,17 @@ export const api = {
         }
         return response.json()
     },
+    patch: async (path: string) => {
+        const response = await fetch(`${API_URL}${api.path}${path}`, {
+            method: "PATCH",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        })
+        if (!response.ok) {
+            throw new Error(`Error patching data: ${response.statusText}`)
+        }
+    },
 }
 
 function mapApiErrors(errorsArray: any[]) {

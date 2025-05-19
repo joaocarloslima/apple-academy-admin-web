@@ -43,7 +43,7 @@ export default function MentorsGrid({mentors}: MentorGridProps) {
                 {data.map((mentor) => (
                     <Card key={mentor.id} className="mb-4">
                         <CardHeader
-                            className="h-56 bg-cover bg-center"
+                            className={`h-56 bg-cover bg-center ${mentor.active ? 'grayscale' : ''}`}
                             style={{ backgroundImage: `url('${mentor.avatarPath}')` }}
                         />
                         <CardContent>
