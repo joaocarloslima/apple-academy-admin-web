@@ -15,3 +15,10 @@ interface Mentor {
     password: string;
     active: boolean;
 }
+
+interface User {
+    id: string;
+    name: string;
+    email: string;
+    avatarPath: string;
+}

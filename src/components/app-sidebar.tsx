@@ -5,6 +5,7 @@ import { ChevronDown, Layers, Moon, Sun, User, UserCheck } from "lucide-react"
 import {
     Sidebar,
     SidebarContent,
+    SidebarFooter,
     SidebarGroup,
     SidebarGroupContent,
     SidebarGroupLabel,
@@ -16,6 +17,7 @@ import {
 import { usePathname } from "next/navigation"
 import { ModeToggle } from "./mode-toggle"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu"
+import { NavUser } from "./nav-user"
 
 // Menu items.
 const items = [
@@ -37,7 +39,7 @@ const items = [
 
 ]
 
-export function AppSidebar() {
+export function AppSidebar({user}: {user: User}) {
     const pathname = usePathname()
 
     return (
@@ -104,6 +106,9 @@ export function AppSidebar() {
                     </SidebarGroupContent>
                 </SidebarGroup>
             </SidebarContent>
+            <SidebarFooter>
+                <NavUser user={user} />
+            </SidebarFooter>
         </Sidebar>
     )
 }
