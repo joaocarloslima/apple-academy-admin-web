@@ -1,20 +1,17 @@
-import { format } from "date-fns";
-import { api } from "./api";
-
-api.setPath("/cohort")
+import { apiGet, apiPost, apiPut } from "./api"
+const PATH = "/cohort"
 
 export async function getCohorts() {
-    return await api.get("")
+    return await apiGet(PATH)
 }
 
 export async function createCohort(data: Cohort) {
     //await new Promise((resolve) => setTimeout(resolve, 3000));
-    return await api.post("", data)
+    return await apiPost(PATH, data)
 }
 
 export async function updateCohort(data: Cohort) {
     //await new Promise((resolve) => setTimeout(resolve, 3000));
-    return await api.put(`/${data.id}`, data)
+    return await apiPut(`${PATH}/${data.id}`, data)
 }
-    
-    
+

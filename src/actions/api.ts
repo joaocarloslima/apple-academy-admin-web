@@ -1,85 +1,156 @@
-import { get } from "http"
+'use server';
 
-const API_URL = process.env.API_BASE_URL || 'http://localhost:8080'
+import { cookies } from 'next/headers';
 
-export const api = {
-    path: "",
-    setPath: (path: string) => {
-        api.path = path
-    },
-    get: async (path: string) => {
-        const response = await fetch(`${API_URL}${api.path}${path}`, {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-            },
-        })
-        if (!response.ok) {
-            throw new Error(`Error fetching data: ${response.statusText}`)
-        }
-        return response.json()
-    },
-    post: async (path: string, data: any) => {
-        const response = await fetch(`${API_URL}${api.path}${path}`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(data),
-        })
-        if (!response.ok) {
-            if (response.status === 400){
-                const errorData = await response.json()
-                return Promise.reject(mapApiErrors(errorData))
-            }
-            throw new Error(`Error posting data: ${response.statusText}`)
-        }
-        return response.json()
-    },
-    delete: async (id: string) => {
-        const response = await fetch(`${API_URL}${api.path}/${id}`, {
-            method: "DELETE",
-            headers: {
-                "Content-Type": "application/json",
-            },
-        })
-        if (!response.ok) {
-            throw new Error(`Error deleting data: ${response.statusText}`)
-        }
-    },
-    put: async (path: string, data: any) => {
-        const response = await fetch(`${API_URL}${api.path}${path}`, {
-            method: "PUT",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(data),
-        })
-        if (!response.ok) {
-            if (response.status === 400){
-                const errorData = await response.json()
-                return Promise.reject(mapApiErrors(errorData))
-            }
-            throw new Error(`Error putting data: ${response.statusText}`)
-        }
-        return response.json()
-    },
-    patch: async (path: string) => {
-        const response = await fetch(`${API_URL}${api.path}${path}`, {
-            method: "PATCH",
-            headers: {
-                "Content-Type": "application/json",
-            },
-        })
-        if (!response.ok) {
-            throw new Error(`Error patching data: ${response.statusText}`)
-        }
-    },
-}
+const API_URL = process.env.API_BASE_URL || 'http://localhost:8080';
 
 function mapApiErrors(errorsArray: any[]) {
     return errorsArray.reduce((accumulator, currentError) => {
-      accumulator[currentError.field] = currentError.message;
-      return accumulator;
+        accumulator[currentError.field] = currentError.message;
+        return accumulator;
     }, {});
-  }
+}
+
+async function getAuthHeader() {
+    const cookieStore = await cookies();
+    const token = cookieStore.get('token')?.value;
+    return token ? { Authorization: `Bearer ${token}` } : {};
+}
+
+export async function apiGet(path: string, useAuth = true) {
+    const headers: Record<string, string> = {
+        'Content-Type': 'application/json',
+    };
+
+    if (useAuth) {
+        const authHeader = await getAuthHeader();
+        Object.assign(headers, authHeader);
+    }
+
+    const response = await fetch(`${API_URL}${path}`, {
+        method: 'GET',
+        headers,
+    });
+
+    let json = await response.json();
+
+    if (!response.ok) {
+        const message = json?.message || 'Unknown error';
+        throw new Error(`Error getting data: ${message}`);
+    }
+
+    return json;
+}
+
+export async function apiPost(path: string, data: any, useAuth = true) {
+    const headers: Record<string, string> = {
+        'Content-Type': 'application/json',
+    };
+
+    if (useAuth) {
+        const authHeader = await getAuthHeader();
+        Object.assign(headers, authHeader);
+    }
+
+    const response = await fetch(`${API_URL}${path}`, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify(data),
+    });
+
+    const json = await response.json();
+
+    if (!response.ok) {
+        if (response.status === 400) {
+            const errorData = await response.json();
+            return Promise.reject(mapApiErrors(errorData));
+        }
+        if (response.status === 401) {
+            return Promise.reject({ message: 'Unauthorized' });
+        }
+        if (response.status === 403) {
+            return Promise.reject({ message: 'Forbidden' });
+        }
+        const message = json?.message || 'Unknown error';
+        throw new Error(`Error sending data: ${message}`);
+    }
+
+    return json;
+}
+
+export async function apiPut(path: string, data: any, useAuth = true) {
+    const headers: Record<string, string> = {
+        'Content-Type': 'application/json',
+    };
+
+    if (useAuth) {
+        const authHeader = await getAuthHeader();
+        Object.assign(headers, authHeader);
+    }
+    const response = await fetch(`${API_URL}${path}`, {
+        method: 'PUT',
+        headers,
+        body: JSON.stringify(data),
+    });
+
+    const json = await response.json();
+
+    if (!response.ok) {
+        if (response.status === 400) {
+            const errorData = await response.json();
+            return Promise.reject(mapApiErrors(errorData));
+        }
+        const message = json?.message || 'Unknown error';
+        throw new Error(`Error updating data: ${message}`);
+    }
+
+    return json
+}
+
+export async function apiDelete(path: string, useAuth = true) {
+    const headers: Record<string, string> = {
+        'Content-Type': 'application/json',
+    };
+
+    if (useAuth) {
+        const authHeader = await getAuthHeader();
+        Object.assign(headers, authHeader);
+    }
+
+    const response = await fetch(`${API_URL}${path}`, {
+        method: 'DELETE',
+        headers,
+    });
+
+    if (!response.ok) {
+        const json = await response.json();
+        const message = json?.message || 'Unknown error';
+        throw new Error(`Error deleting data: ${message}`);
+    }
+}
+
+export async function apiPatch(path: string, data: any, useAuth = true) {
+    const headers: Record<string, string> = {
+        'Content-Type': 'application/json',
+    };
+
+    if (useAuth) {
+        const authHeader = await getAuthHeader();
+        Object.assign(headers, authHeader);
+    }
+
+    const response = await fetch(`${API_URL}${path}`, {
+        method: 'PATCH',
+        headers,
+        body: JSON.stringify(data),
+    });
+
+    const json = await response.json(); 
+
+    if (!response.ok) {
+        const message = json?.message || 'Unknown error';
+        throw new Error(`Error updating data: ${message}`);
+    }
+
+    return json;
+}

@@ -36,12 +36,10 @@ import {
     TableRow,
 } from "@/components/ui/table"
 import { CohortFormCreate } from "./cohort-form"
-import { api } from "@/actions/api"
 import { toast } from "sonner"
+import { apiDelete } from "@/actions/api"
 
-api.setPath("/cohort")
-
-
+const PATH = "/cohort"
 
 interface DataTableCohortsProps {
     cohorts: Cohort[]
@@ -183,7 +181,7 @@ export function DataTableCohorts({ cohorts }: DataTableCohortsProps) {
 
     function handleDelete(id: string) {
         toast.promise(
-            api.delete(id),
+            apiDelete(`${PATH}/${id}`),
             {
                 loading: "Deleting cohort...",
                 success: () => {
