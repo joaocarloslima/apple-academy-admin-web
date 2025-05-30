@@ -16,6 +16,19 @@ interface Mentor {
     active: boolean;
 }
 
+interface Student {
+    id: string;
+    name: string;
+    avatarPath: string;
+    email: string;
+    password: string;
+    expertise: string;
+    deliveryMode: "IN_PERSON" | "ONLINE";
+    program: string;
+    birthDate: string;
+    cohort: Cohort;
+}
+
 interface User {
     id: string;
     name: string;

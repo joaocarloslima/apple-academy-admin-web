@@ -52,6 +52,8 @@ export async function apiPost(path: string, data: any, useAuth = true) {
         Object.assign(headers, authHeader);
     }
 
+    console.log(data)
+
     const response = await fetch(`${API_URL}${path}`, {
         method: 'POST',
         headers,
