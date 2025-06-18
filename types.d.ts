@@ -35,3 +35,4 @@ interface User {
     email: string;
     avatarPath: string;
 }
+

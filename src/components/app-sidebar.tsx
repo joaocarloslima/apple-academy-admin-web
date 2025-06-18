@@ -1,6 +1,6 @@
 "use client"
 
-import { ChevronDown, Layers, Moon, Sun, User, UserCheck } from "lucide-react"
+import { Layers, Moon, Sun, User, UserCheck } from "lucide-react"
 
 import {
     Sidebar,
@@ -16,8 +16,8 @@ import {
 } from "@/components/ui/sidebar"
 import { usePathname } from "next/navigation"
 import { ModeToggle } from "./mode-toggle"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu"
 import { NavUser } from "./nav-user"
+import DropdownCohort from "./dropdown-cohort"
 
 // Menu items.
 const items = [
@@ -39,7 +39,14 @@ const items = [
 
 ]
 
-export function AppSidebar({user}: {user: User}) {
+interface AppSidebarProps {
+    user: User;
+    cohorts?: Cohort[];
+    selectedCohort?: string;
+}
+
+
+export function AppSidebar({user, cohorts, selectedCohort}: AppSidebarProps) {
     const pathname = usePathname()
 
     return (
@@ -47,22 +54,7 @@ export function AppSidebar({user}: {user: User}) {
             <SidebarHeader>
                 <SidebarMenu>
                     <SidebarMenuItem>
-                        <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                                <SidebarMenuButton>
-                                    Select Cohort
-                                    <ChevronDown className="ml-auto" />
-                                </SidebarMenuButton>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent className="w-[--radix-popper-anchor-width]">
-                                <DropdownMenuItem>
-                                    <span>2024-2025</span>
-                                </DropdownMenuItem>
-                                <DropdownMenuItem>
-                                    <span>2026-2027</span>
-                                </DropdownMenuItem>
-                            </DropdownMenuContent>
-                        </DropdownMenu>
+                        <DropdownCohort cohorts={cohorts} selectedCohort={selectedCohort}/>
                     </SidebarMenuItem>
                 </SidebarMenu>
             </SidebarHeader>

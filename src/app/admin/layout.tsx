@@ -1,6 +1,7 @@
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
 import { AppSidebar } from "@/components/app-sidebar"
 import { cookies } from "next/headers"
+import { getCohorts } from "@/actions/cohort-actions"
 
 export default async function Layout({ children }: { children: React.ReactNode }) {
   const cookiesStore = await cookies()
@@ -12,9 +13,13 @@ export default async function Layout({ children }: { children: React.ReactNode }
     avatarPath: cookiesStore.get("avatarPath")?.value || `https://avatar.iran.liara.run/username?username=${name}`,
   }
 
+  const cohorts = await getCohorts()
+  const selectedCohort = cookiesStore.get("selectedCohort")?.value || cohorts[0]?.id
+
+
   return (
     <SidebarProvider>
-      <AppSidebar user={user} />
+      <AppSidebar user={user} cohorts={cohorts} selectedCohort={selectedCohort} />
       <main className="flex flex-col gap-4 p-6 w-full ">
         <SidebarTrigger />
         {children}
