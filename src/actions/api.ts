@@ -2,7 +2,7 @@
 
 import { cookies } from 'next/headers';
 
-const API_URL = process.env.API_BASE_URL || 'http://localhost:8080';
+const API_URL = process.env.API_BASE_URL || 'http://localhost:8083';
 
 function mapApiErrors(errorsArray: any[]) {
     return errorsArray.reduce((accumulator, currentError) => {
